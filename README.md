@@ -12,7 +12,7 @@ This extension is under heavy development so it is subject to change at any time
 For the moment the plugin is not plubished yet. For installing it clone it in the extensions folder:
 ```console
 $ git clone https://github.com/kubeless/vscode-kubeless $HOME/.vscode/extensions/vscode-kubeless
-$ cd $HOME/.vscode/extensions
+$ cd $HOME/.vscode/extensions/vscode-kubeless
 $ npm install
 $ npm run compile
 ```
