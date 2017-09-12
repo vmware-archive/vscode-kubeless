@@ -205,10 +205,18 @@ function getLogsFunction(f: func) {
 
 async function deleteFunction(f: func) {
     try {
+        if (!logChannels[`${f.id}-deployment`]) {
+            logChannels[`${f.id}-deployment`] = vscode.window.createOutputChannel(`${f.id}-deployment`);
+        }
+        logChannels[`${f.id}-deployment`].show();
+        // Redirect console output to the user
+        redirectConsoleLog(logChannels[`${f.id}-deployment`]);
         await remove([f], f.runtime, { verbose: true, force: true })
         vscode.window.showInformationMessage(`${f.id} successfully deleted`);
+        restoreConsoleLog();
     } catch(err) {
         vscode.window.showErrorMessage(`ERROR: ${err}`);
+        restoreConsoleLog();
         throw new Error();
     }
 }
