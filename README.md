@@ -27,7 +27,3 @@ This plugin support several commands for interacting with Kubeless and Kubernete
 * `Call Function`: Call the current function
 * `Get Function Logs`: Display the logs of the current function
 * `Delete Function`: Delete the current function
-
-## Known Issues
-
-Check `TODO` comments in the code.
