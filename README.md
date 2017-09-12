@@ -26,7 +26,6 @@ This plugin support several commands for interacting with Kubeless and Kubernete
 * `Deploy Function`: Deploys the current file as a Kubeless function
 * `Call Function`: Call the current function
 * `Get Function Logs`: Display the logs of the current function
-* `Update Function`: Update the deployed function with the current code
 * `Delete Function`: Delete the current function
 
 ## Known Issues
