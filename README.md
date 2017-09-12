@@ -21,7 +21,7 @@ Then you can open VScode and execute the exported commands.
 
 ## Features
 
-This plugin support several commands for interacting with Kubeless and Kubernetes:
+This plugin support several commands for interacting with Kubeless and Kubernetes. For executing them open the Command Palette (⇧⌘P (Windows, Linux Ctrl+Shift+P)) and type:
 
 * `Deploy Function`: Deploys the current file as a Kubeless function
 * `Call Function`: Call the current function
