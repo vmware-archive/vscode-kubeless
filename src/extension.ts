@@ -72,7 +72,7 @@ function restoreConsoleLog() {
     console.log = consoleLog;
 }
 
-function getFunction() {
+async function getFunction() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         vscode.window.showErrorMessage('No editor found');
@@ -97,7 +97,7 @@ function getFunction() {
         environment: {},
         memorySize: null,
     }
-    return new Promise((resolve, reject) => {
+    return new Promise<func> ( async (resolve, reject) => {
         func = importFunctionDef(doc.fileName) || func;
         if (func.id) {
             // If the function is found update the current text
@@ -122,71 +122,67 @@ function getFunction() {
                         throw new Error();
                 }
             }
-            vscode.window.showInputBox({ prompt: 'Which function do you want to work with? (It should match with a function exposed)' }).then(id => {
-                if (id) {
-                    func.id = id;
-                    func.handler = func.handler || `${handlerFile}.${func.id}`;
-                    exportFunctionDef(func);
-                    resolve(func);
-                } else {
-                    vscode.window.showErrorMessage('You should specify the function name')
-                    reject();
-                }
-            });
+            const id = await vscode.window.showInputBox({ prompt: 'Which function do you want to work with? (It should match with a function exposed)' });
+            if (id) {
+                func.id = id;
+                func.handler = func.handler || `${handlerFile}.${func.id}`;
+                exportFunctionDef(func);
+                resolve(func);
+            } else {
+                vscode.window.showErrorMessage('You should specify the function name')
+                reject();
+            }
+
         }
     });
 }
  
-function deployFunction(f: func) {
+async function deployFunction(f: func) {
     if (!logChannels[`${f.id}-deployment`]) {
         logChannels[`${f.id}-deployment`] = vscode.window.createOutputChannel(`${f.id}-deployment`);
     }
     logChannels[`${f.id}-deployment`].show();
     // Redirect console output to the user
     redirectConsoleLog(logChannels[`${f.id}-deployment`]);
-    deploy([f], f.runtime, {verbose: true, force: true})
-        .catch((err) => {
-            vscode.window.showErrorMessage(`ERROR: ${err}`);
-            restoreConsoleLog();
-            throw new Error();
-        })
-        .then((res) => {
-            vscode.window.showInformationMessage(`Deployment finished`);
-            restoreConsoleLog();
-        });
+    try {
+        const res = await deploy([f], f.runtime, { verbose: true, force: true });
+        vscode.window.showInformationMessage(`Deployment finished`);
+        restoreConsoleLog();
+    } catch (err) {
+        vscode.window.showErrorMessage(`ERROR: ${err}`);
+        restoreConsoleLog();
+        throw new Error(err);
+    }
 }
 
-function callFunction(f: func) {
-    vscode.window.showInputBox({ prompt: 'Introduce call data (or file containing the data)' })
-        .then(data => {
-            let promise = null;
-            if (!logChannels[f.id]) {
-                logChannels[f.id] = vscode.window.createOutputChannel(f.id);
-            }
-            logChannels[f.id].show();
-            logChannels[f.id].append(`Calling ${f.id}...\n`);
-            if (data && fs.existsSync(data)) {
-                // Path introduced
-                promise = call(f.id, null, [f], { path: data });
-            } else {
-                promise = call(f.id, data, [f]);
-            }
-            promise.catch((err: Error) => {
-                vscode.window.showErrorMessage(err.message);
-                return;
-            });
-            promise.then((response: request.Response) => {
-                if (!_.isEmpty(response.body)) {
-                    const responseAsString = _.isPlainObject(response.body) ?
-                      JSON.stringify(response.body, null, 2) :
-                      response.body;
-                    logChannels[f.id].append(`Response:\n${responseAsString}\n`);
-                } else {
-                    // Received an empty response
-                    logChannels[f.id].append(`${f.id} succesfully invoked\n`);
-                }
-            })
-        });
+async function callFunction(f: func) {
+    const data = await vscode.window.showInputBox({ prompt: 'Introduce call data (or file containing the data)' });
+    let response = null;
+    if (!logChannels[f.id]) {
+        logChannels[f.id] = vscode.window.createOutputChannel(f.id);
+    }
+    logChannels[f.id].show();
+    logChannels[f.id].append(`Calling ${f.id}...\n`);
+    try {
+        if (data && fs.existsSync(data)) {
+            // Path introduced
+            response = await call(f.id, null, [f], { path: data });
+        } else {
+            response = await call(f.id, data, [f]);
+        }
+    } catch (err) {
+        vscode.window.showErrorMessage(err.message);
+        return;
+    }
+    if (!_.isEmpty(response.body)) {
+        const responseAsString = _.isPlainObject(response.body) ?
+            JSON.stringify(response.body, null, 2) :
+            response.body;
+        logChannels[f.id].append(`Response:\n${responseAsString}\n`);
+    } else {
+        // Received an empty response
+        logChannels[f.id].append(`${f.id} succesfully invoked\n`);
+    }
 }
 
 function getLogsFunction(f: func) {
@@ -207,65 +203,55 @@ function getLogsFunction(f: func) {
     logChannels[`${f.id}-logs`].show();
 }
 
-function deleteFunction(f: func) {
-    remove([f], f.runtime, { verbose: true, force: true })
-        .catch((err) => {
-            vscode.window.showErrorMessage(`ERROR: ${err}`);
-            throw new Error();
-        })
-        .then((res) => {
-            vscode.window.showInformationMessage(`${f.id} successfully deleted`);
-            restoreConsoleLog();
-        });
+async function deleteFunction(f: func) {
+    try {
+        await remove([f], f.runtime, { verbose: true, force: true })
+        vscode.window.showInformationMessage(`${f.id} successfully deleted`);
+    } catch(err) {
+        vscode.window.showErrorMessage(`ERROR: ${err}`);
+        throw new Error();
+    }
 }
 
 export function activate(context: vscode.ExtensionContext) {
 
     // Deploy
-    context.subscriptions.push(vscode.commands.registerCommand('extension.deployFunction', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('extension.deployFunction', async () => {
         try {
-            getFunction().then((f: func) => {
-                deployFunction(f);
-            });
+            const f = await getFunction();
+            deployFunction(f);
         } catch (e) {
             vscode.window.showErrorMessage(e.message);
         }
     }));
 
     // Call
-    context.subscriptions.push(vscode.commands.registerCommand('extension.callFunction', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('extension.callFunction', async () => {
         try {
-            getFunction().then((f: func) => {
-                callFunction(f);
-            });
+            const f = await getFunction();
+            callFunction(f);
         } catch (e) {
             vscode.window.showErrorMessage(e.message);
         }
     }));
 
     // Logs
-    context.subscriptions.push(vscode.commands.registerCommand('extension.getFunctionLogs', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('extension.getFunctionLogs', async () => {
         try {
-            getFunction().then((f: func) => {
-                getLogsFunction(f);
-            });
+            const f = await getFunction();
+            getLogsFunction(f);
         } catch (e) {
             vscode.window.showErrorMessage(e.message);
         }
     }));
 
     // Delete
-    context.subscriptions.push(vscode.commands.registerCommand('extension.deleteFunction', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('extension.deleteFunction', async () => {
         try {
-            getFunction().then((f: func) => {
-                deleteFunction(f);
-            });
+            const f = await getFunction();
+            deleteFunction(f);
         } catch (e) {
             vscode.window.showErrorMessage(e.message);
         }
     }));
-}
-
-// this method is called when your extension is deactivated
-export function deactivate() {
 }
