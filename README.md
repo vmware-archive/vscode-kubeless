@@ -7,7 +7,6 @@ This extension is under heavy development so it is subject to change at any time
 ## Requirements
 
  - Kubeless. [Installation Instructions](https://github.com/kubeless/kubeless#installation)
- - (Temporary) TypeScript. [Installation Instructions](https://www.typescriptlang.org/index.html#download-links)
 
 ## Installation
 
