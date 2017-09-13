@@ -1,5 +1,7 @@
 # VSCode extension for Kubeless
 
+[![VSCode Extension for Kubeless](./VSCode-Kubeless.gif)](https://youtu.be/t9Fn04pCXv4)
+
 This extension is under heavy development so it is subject to change at any time.
 
 ## Requirements
