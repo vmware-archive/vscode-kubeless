@@ -1,8 +1,8 @@
 {
-    "name": "vscode-kubeless",
-    "displayName": "vscode-kubeless",
+    "name": "kubeless",
+    "displayName": "kubeless",
     "description": "Kubeless plugin for VSCode",
-    "version": "0.0.2",
+    "version": "0.0.1",
     "publisher": "bitnami",
     "icon": "kubeless_icon.png",
     "engines": {
