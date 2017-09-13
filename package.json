@@ -4,6 +4,7 @@
     "description": "Kubeless plugin for VSCode",
     "version": "0.0.1",
     "publisher": "bitnami",
+    "icon": "kubeless_icon.png",
     "engines": {
         "vscode": "^1.15.0"
     },
