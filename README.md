@@ -1,6 +1,6 @@
 # VSCode extension for Kubeless
 
-[<img src="./VSCode-Kubeless.gif" width="600" align="center">](https://youtu.be/t9Fn04pCXv4)
+[<img src="https://raw.githubusercontent.com/kubeless/vscode-kubeless/master/VSCode-Kubeless.gif" width="600" align="center">](https://youtu.be/t9Fn04pCXv4)
 
 This extension is under heavy development so it is subject to change at any time.
 
