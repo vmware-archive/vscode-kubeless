@@ -188,18 +188,20 @@ async function callFunction(f: func) {
 function getLogsFunction(f: func) {
     if (!logChannels[`${f.id}-logs`]) {
         logChannels[`${f.id}-logs`] = vscode.window.createOutputChannel(`${f.id}-logs`);
-        const p = getLogs(f.id, {
-            namespace: f.namespace,
-            tail: true,
-            onData: (d) => {
-                logChannels[`${f.id}-logs`].append(d.toString());
-            }
-        });
-        p.catch((err: Error) => {
-            vscode.window.showErrorMessage(err.message);
-            return;
-        })
+    } else {
+        logChannels[`${f.id}-logs`].clear();
     }
+    const p = getLogs(f.id, {
+        namespace: f.namespace,
+        tail: true,
+        onData: (d) => {
+            logChannels[`${f.id}-logs`].append(d.toString());
+        }
+    });
+    p.catch((err: Error) => {
+        vscode.window.showErrorMessage(err.message);
+        return;
+    })
     logChannels[`${f.id}-logs`].show();
 }
 

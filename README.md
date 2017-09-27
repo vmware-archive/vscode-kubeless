@@ -16,7 +16,7 @@ You can install this extension from the [marketplace](https://marketplace.visual
 
 This plugin support several commands for interacting with Kubeless and Kubernetes. For executing them open the Command Palette (⇧⌘P (Windows, Linux Ctrl+Shift+P)) and type:
 
-* `Deploy Function`: Deploys the current file as a Kubeless function
+* `Deploy Function`: Deploy the current file as a Kubeless function
 * `Call Function`: Call the current function
 * `Get Function Logs`: Display the logs of the current function
 * `Delete Function`: Delete the current function

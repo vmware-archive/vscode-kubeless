@@ -2,7 +2,7 @@
     "name": "kubeless",
     "displayName": "kubeless",
     "description": "Kubeless plugin for VSCode",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "bitnami",
     "icon": "kubeless_icon.png",
     "engines": {
@@ -44,7 +44,7 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
-        "serverless-kubeless": "^0.1.13"
+        "serverless-kubeless": "^0.2.0"
     },
     "devDependencies": {
         "typescript": "^2.5.2",
