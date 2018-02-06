@@ -1,3 +1,5 @@
+[![Slack](https://img.shields.io/badge/slack-join%20chat%20%E2%86%92-e01563.svg)](http://slack.k8s.io)
+
 # VSCode extension for Kubeless
 
 [<img src="https://raw.githubusercontent.com/kubeless/vscode-kubeless/master/VSCode-Kubeless.gif" width="600" align="center">](https://youtu.be/t9Fn04pCXv4)
