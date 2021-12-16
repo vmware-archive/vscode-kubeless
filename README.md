@@ -1,5 +1,11 @@
 [![Slack](https://img.shields.io/badge/slack-join%20chat%20%E2%86%92-e01563.svg)](http://slack.k8s.io)
 
+## WARNING: Kubeless is no longer actively maintained by VMware.
+
+VMware has made the difficult decision to stop driving this project and therefore we will no longer actively respond to issues or pull requests. If you would like to take over maintaining this project independently from VMware, please let us know so we can add a link to your forked project here.
+
+Thank You.
+
 # VSCode extension for Kubeless
 
 [<img src="https://raw.githubusercontent.com/kubeless/vscode-kubeless/master/VSCode-Kubeless.gif" width="600" align="center">](https://youtu.be/t9Fn04pCXv4)
